@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1075358443258",
+    "firebase_url": "https://scammie-63d2a-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "scammie-63d2a",
+    "storage_bucket": "scammie-63d2a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1075358443258:android:32a1a1b360520184130b43",
+        "android_client_info": {
+          "package_name": "com.example.scammie"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcGfYbcubUGM_09cb3Fpd1_ODOtSeI4HM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
