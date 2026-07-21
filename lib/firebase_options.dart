@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     databaseURL: 'https://scammie-63d2a-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'scammie-63d2a.firebasestorage.app',
   );
-
+  
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDC-S7vcbph4zeL360B2HXtWw0zpCkB7Ak',
     appId: '1:1075358443258:ios:7c3e93747cd6493e130b43',
