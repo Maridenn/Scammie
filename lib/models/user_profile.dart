@@ -2,13 +2,15 @@ class UserProfile {
   final String uid;
   final String username;
   final String email;
-  final int bestScore; // 0–100 percent
+  final int bestScore;
+  final String bestGame;
   final int gamesPlayed;
 
   const UserProfile({
     required this.uid,
     required this.username,
     required this.email,
+    this.bestGame = "none",
     this.bestScore = 0,
     this.gamesPlayed = 0,
   });
