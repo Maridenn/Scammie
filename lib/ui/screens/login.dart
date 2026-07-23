@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import './dashboard.dart';
 import '../screens/sign_up.dart';
 import '../theme/app_theme.dart';
 import '../widgets/form_divider.dart';
@@ -66,7 +66,11 @@ class LoginForm extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () => Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                  (route) => false,
+                ),
                 child: const Text("Sign In"),
               ),
             ),
@@ -74,7 +78,10 @@ class LoginForm extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
-                onPressed: () => Get.to(() => const SignUpScreen()),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SignUpScreen()),
+                ),
                 child: const Text("Create an account"),
               ),
             ),

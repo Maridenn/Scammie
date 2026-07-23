@@ -16,8 +16,8 @@ class SocialButton extends StatelessWidget {
           child: IconButton(
             onPressed: () {},
             icon: const Image(
-              width: 14,
-              height: 14,
+              width: 20,
+              height: 20,
               image: AssetImage("assets/images/google.png"),
             ),
           ),
