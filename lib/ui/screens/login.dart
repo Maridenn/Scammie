@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../data/repositories/auth_repository.dart';
 import './dashboard.dart';
 import '../screens/sign_up.dart';
 import '../theme/app_theme.dart';
 import '../widgets/form_divider.dart';
+import '../widgets/labeled_field.dart';
 import '../widgets/social_button.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -29,48 +31,88 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
+
+  @override
+  State<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  final _formKey = GlobalKey<FormState>();
+  final _auth = AuthRepository();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onSignIn() async {
+    if (!_formKey.currentState!.validate()) return;
+    try {
+      await _auth.signIn(email: _email.text.trim(), password: _password.text);
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(AuthRepository.friendlyError(e)), backgroundColor: AppTheme.errorColor,));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 32),
         child: Column(
           children: [
-            TextFormField(
-              decoration: const InputDecoration(labelText: "Username or Email"),
+            LabeledField(
+              label: "Email",
+              controller: _email,
+              keyboardType: TextInputType.emailAddress,
+              validator: (v) => (v == null || !v.contains("@"))
+                  ? "Enter a valid email"
+                  : null,
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: "Password",
-                suffixIcon: Icon(Icons.visibility),
-              ),
+            LabeledField(
+              label: "Password",
+              controller: _password,
+              obscureText: true,
+              showEye: true,
+              validator: (v) =>
+                  (v == null || v.isEmpty) ? "Enter your password" : null,
             ),
             const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    "Forgot Password",
-                    style: TextStyle(color: AppTheme.brandColor),
-                  ),
-                ),
-              ],
-            ),
+            // placeholder for in the future if we want to implement a forgot password
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: [
+            //     TextButton(
+            //       onPressed: () {},
+            //       child: const Text(
+            //         "Forgot Password",
+            //         style: TextStyle(color: AppTheme.brandColor),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => const DashboardScreen()),
-                  (route) => false,
-                ),
+                onPressed: _onSignIn,
                 child: const Text("Sign In"),
               ),
             ),

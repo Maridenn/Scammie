@@ -5,7 +5,8 @@ class AppTheme {
   AppTheme._();
 
   static const Color brandColor = Color.fromARGB(255, 37, 99, 235);
-  
+  static const Color errorColor = Color.fromARGB(255, 181, 10, 10);
+
   static const Color sendBlue = Color.fromARGB(255, 0, 122, 255);
   static const Color receivedGray = Color.fromARGB(255, 233, 233, 235);
 

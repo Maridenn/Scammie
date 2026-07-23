@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../data/repositories/auth_repository.dart';
 import './dashboard.dart';
 import '../widgets/social_button.dart';
 import '../theme/app_theme.dart';
 import '../widgets/form_divider.dart';
+import '../widgets/labeled_field.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
@@ -32,38 +34,92 @@ class SignUpScreen extends StatelessWidget {
   }
 }
 
-class SignUpForm extends StatelessWidget {
-  const SignUpForm({
-    super.key,
-  });
+class SignUpForm extends StatefulWidget {
+  const SignUpForm({super.key});
+
+  @override
+  State<SignUpForm> createState() => _SignUpFormState();
+}
+
+class _SignUpFormState extends State<SignUpForm> {
+  final _formKey = GlobalKey<FormState>();
+  final _auth = AuthRepository();
+  final _username = TextEditingController();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+  final _confirm = TextEditingController();
+
+  @override
+  void dispose() {
+    _username.dispose();
+    _email.dispose();
+    _password.dispose();
+    _confirm.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onCreate() async {
+    if (!_formKey.currentState!.validate()) return;
+    try {
+      await _auth.signUp(
+        username: _username.text.trim(),
+        email: _email.text.trim(),
+        password: _password.text,
+      );
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(AuthRepository.friendlyError(e)), backgroundColor: AppTheme.errorColor,));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: Column(
         children: [
-          TextFormField(
-            decoration: const InputDecoration(labelText: "Username"),
+          LabeledField(
+            label: "Username",
+            controller: _username,
+            validator: (v) =>
+                (v == null || v.trim().isEmpty) ? "Enter a username" : null,
           ),
           const SizedBox(height: 16),
-          TextFormField(
-            decoration: const InputDecoration(labelText: "Email"),
+          LabeledField(
+            label: "Email",
+            controller: _email,
+            keyboardType: TextInputType.emailAddress,
+            validator: (v) =>
+                (v == null || !v.contains("@")) ? "Enter a valid email" : null,
           ),
           const SizedBox(height: 16),
-          TextFormField(
-            decoration: const InputDecoration(
-              labelText: "Password",
-              suffixIcon: Icon(Icons.visibility),
-            ),
+          LabeledField(
+            label: "Password",
+            controller: _password,
+            obscureText: true,
+            showEye: true,
+            validator: (v) =>
+                (v == null || v.length < 6) ? "At least 6 characters" : null,
           ),
           const SizedBox(height: 16),
-          TextFormField(
-            decoration: const InputDecoration(
-              labelText: "Confirm Password",
-              suffixIcon: Icon(Icons.visibility),
-            ),
+          LabeledField(
+            label: "Confirm Password",
+            controller: _confirm,
+            obscureText: true,
+            showEye: true,
+            validator: (v) =>
+                (v != _password.text) ? "Passwords do not match" : null,
           ),
           const SizedBox(height: 32),
+          // placeholder for when we were to add a policy or terms
           // Row(
           //   children: [
           //     SizedBox(
@@ -101,11 +157,7 @@ class SignUpForm extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => const DashboardScreen()),
-                  (route) => false,
-                ),
+              onPressed: _onCreate,
               child: const Text("Create Account"),
             ),
           ),
