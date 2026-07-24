@@ -7,6 +7,12 @@ class AppTheme {
   static const Color brandColor = Color.fromARGB(255, 37, 99, 235);
   static const Color errorColor = Color.fromARGB(255, 181, 10, 10);
 
+  static const Color goodResult = Color.fromARGB(255, 34, 197, 94);
+  static const Color rankBadge = Color.fromARGB(37, 10, 118, 50);
+  static const Color midResult = Color.fromARGB(255, 245, 158, 11);
+  static const Color badResult = Color.fromARGB(255, 181, 10, 10);
+  static const Color progresBarBg = Color.fromARGB(255, 229, 231, 235);
+
   static const Color sendBlue = Color.fromARGB(255, 0, 122, 255);
   static const Color receivedGray = Color.fromARGB(255, 233, 233, 235);
 

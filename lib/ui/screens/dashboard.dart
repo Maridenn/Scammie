@@ -3,6 +3,7 @@ import '../theme/app_theme.dart';
 import '../widgets/app_shell.dart';
 import './home.dart';
 import './profile.dart';
+import './history.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -19,7 +20,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildBody() {
     switch (_selectedIndex) {
       case 0:
-        return const _Placeholder(label: "History coming soon");
+        return const HistoryPage();
       case 2:
         return const ProfilePage();
       default:
@@ -35,16 +36,5 @@ class _DashboardScreenState extends State<DashboardScreen> {
       onHomeTap: () => onNavTap(1),
       body: _buildBody(),
     );
-  }
-}
-
-class _Placeholder extends StatelessWidget {
-  const _Placeholder({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(label, style: AppTheme.subheading));
   }
 }
