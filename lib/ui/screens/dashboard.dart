@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 import '../widgets/app_shell.dart';
 import './home.dart';
 import './profile.dart';
