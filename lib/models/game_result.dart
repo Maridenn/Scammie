@@ -1,11 +1,12 @@
 class GameResult {
-  final String? id; 
+  final String? id;
   final String scenarioId;
   final String scenarioTitle;
-  final String difficulty; 
+  final String difficulty;
   final int scorePercent;
   final int safeActions;
   final int riskyActions;
+  final List<String> mistakes;
   final DateTime playedAt;
 
   const GameResult({
@@ -16,6 +17,7 @@ class GameResult {
     required this.scorePercent,
     required this.safeActions,
     required this.riskyActions,
+    this.mistakes = const [],
     required this.playedAt,
   });
 
@@ -27,6 +29,7 @@ class GameResult {
       'scorePercent': scorePercent,
       'safeActions': safeActions,
       'riskyActions': riskyActions,
+      'mistakes': mistakes,
       'playedAt': playedAt.millisecondsSinceEpoch,
     };
   }
@@ -40,6 +43,7 @@ class GameResult {
       scorePercent: map['scorePercent'] ?? 0,
       safeActions: map['safeActions'] ?? 0,
       riskyActions: map['riskyActions'] ?? 0,
+      mistakes: List<String>.from(map['mistakes']?? const []),
       playedAt: DateTime.fromMillisecondsSinceEpoch(map['playedAt'] ?? 0),
     );
   }
