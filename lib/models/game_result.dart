@@ -1,3 +1,27 @@
+class ActionLog {
+  final String action;
+  final String feedback;
+  final bool safe;
+
+  const ActionLog({
+    required this.action,
+    required this.feedback,
+    required this.safe,
+  });
+
+  Map<String, dynamic> toMap() => {
+    "action": action,
+    "feedback": feedback,
+    "safe": safe,
+  };
+
+  factory ActionLog.fromMap(Map<String, dynamic> map) => ActionLog(
+    action: map["action"] ?? "",
+    feedback: map["feedback"] ?? '',
+    safe: map["safe"] ?? false,
+  );
+}
+
 class GameResult {
   final String? id;
   final String scenarioId;
@@ -6,8 +30,8 @@ class GameResult {
   final int scorePercent;
   final int safeActions;
   final int riskyActions;
-  final List<String> mistakes;
   final DateTime playedAt;
+  final List<ActionLog> log;
 
   const GameResult({
     this.id,
@@ -17,20 +41,20 @@ class GameResult {
     required this.scorePercent,
     required this.safeActions,
     required this.riskyActions,
-    this.mistakes = const [],
     required this.playedAt,
+    this.log = const [],
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'scenarioId': scenarioId,
-      'scenarioTitle': scenarioTitle,
-      'difficulty': difficulty,
-      'scorePercent': scorePercent,
-      'safeActions': safeActions,
-      'riskyActions': riskyActions,
-      'mistakes': mistakes,
-      'playedAt': playedAt.millisecondsSinceEpoch,
+      "scenarioId": scenarioId,
+      "scenarioTitle": scenarioTitle,
+      "difficulty": difficulty,
+      "scorePercent": scorePercent,
+      "safeActions": safeActions,
+      "riskyActions": riskyActions,
+      "playedAt": playedAt.millisecondsSinceEpoch,
+      "log": log.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -43,8 +67,10 @@ class GameResult {
       scorePercent: map['scorePercent'] ?? 0,
       safeActions: map['safeActions'] ?? 0,
       riskyActions: map['riskyActions'] ?? 0,
-      mistakes: List<String>.from(map['mistakes']?? const []),
       playedAt: DateTime.fromMillisecondsSinceEpoch(map['playedAt'] ?? 0),
+      log: ((map['log'] as List?) ?? [])
+          .map((e) => ActionLog.fromMap(Map<String, dynamic>.from(e)))
+          .toList(),
     );
   }
 }
