@@ -2,8 +2,8 @@ import 'chat_choice.dart';
 
 class ChatStep {
   final String id;
-  final List<String> botMessages; // messages the "scammer" sends
-  final List<ChatChoice> choices; // empty list=terminal step(conversation over)
+  final List<String> botMessages;
+  final List<ChatChoice> choices;
 
   const ChatStep({
     required this.id,
@@ -14,10 +14,11 @@ class ChatStep {
 
 class Scenario {
   final String id;
-  final String title; // shown on the dashboard, ex: "Message with IT"
-  final String sender; 
-  final String category; 
+  final String title;
+  final String sender;
+  final String category;
   final List<ChatStep> steps;
+  final List<String> sources;
 
   const Scenario({
     required this.id,
@@ -25,5 +26,6 @@ class Scenario {
     required this.sender,
     required this.category,
     required this.steps,
+    this.sources = const [],
   });
 }
