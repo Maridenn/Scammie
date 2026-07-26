@@ -13,24 +13,29 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final _auth = AuthRepository();
-  late Future<UserProfile?> _profileFuture;
+  final auth = AuthRepository();
+  late Future<UserProfile?> profileFuture;
 
   @override
   void initState() {
     super.initState();
-    _loadProfile();
+    loadProfile();
   }
 
-  void _loadProfile() {
-    final uid = _auth.currentUser?.uid;
-    _profileFuture = uid == null ? Future.value(null) : _auth.getProfile(uid);
+  void loadProfile() {
+    final uid = auth.currentUser?.uid;
+    profileFuture = uid == null ? Future.value(null) : auth.getProfile(uid);
+  }
+
+  Future<void> refresh() async {
+    setState(loadProfile);
+    await profileFuture;
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserProfile?>(
-      future: _profileFuture,
+      future: profileFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -44,44 +49,48 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           );
         }
-        return SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(
-            children: [
-              const SizedBox(height: 24),
-              InfoCard(info: profile),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => EditProfileScreen(profile: profile),
-                      ),
-                    );
-                    if (mounted) setState(_loadProfile);
-                  },
-                  child: const Text("Edit Profile"),
+        return RefreshIndicator(
+          onRefresh: refresh,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+            child: Column(
+              children: [
+                const SizedBox(height: 24),
+                InfoCard(info: profile),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => EditProfileScreen(profile: profile),
+                        ),
+                      );
+                      if (mounted) setState(loadProfile);
+                    },
+                    child: const Text("Edit Profile"),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _handleLogout,
-                  child: const Text("Log out"),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: handleLogout,
+                    child: const Text("Log out"),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
     );
   }
 
-  Future<void> _handleLogout() async {
+  Future<void> handleLogout() async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -101,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     if (confirmed != true) return;
-    await _auth.signOut();
+    await auth.signOut();
     if (!mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
