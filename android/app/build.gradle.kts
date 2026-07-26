@@ -18,7 +18,10 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.scammie.app"
+        // Must match a client in google-services.json — Firebase registered
+        // this app as com.example.scammie. To use a different id, add it as a
+        // new Android app in the Firebase console and swap the json file.
+        applicationId = "com.example.scammie"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
