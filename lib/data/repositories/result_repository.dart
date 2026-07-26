@@ -12,12 +12,17 @@ class ResultRepository {
     await userDoc.collection('results').add(result.toMap());
 
     final snapshot = await userDoc.get();
-    final profile = UserProfile.fromMap(snapshot.data()!);
+    final data = snapshot.data();
+    if (data == null)
+      return; // result was saved, profile stats just aren't updated
+    final profile = UserProfile.fromMap(data);
 
     await userDoc.update({
       'gamesPlayed': profile.gamesPlayed + 1,
-      if (result.scorePercent > profile.bestScore)
+      if (result.scorePercent > profile.bestScore) ...{
         'bestScore': result.scorePercent,
+        'bestGame': result.scenarioTitle,
+      },
     });
   }
 
