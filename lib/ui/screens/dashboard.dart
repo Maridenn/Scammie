@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/app_shell.dart';
 import './home.dart';
-import './profile.dart';
 import './history.dart';
+import './profile.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -12,12 +12,12 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  int _selectedIndex = 1;
+  int selectedIndex = 1;
 
-  void onNavTap(int index) => setState(() => _selectedIndex = index);
+  void onNavTap(int index) => setState(() => selectedIndex = index);
 
-  Widget _buildBody() {
-    switch (_selectedIndex) {
+  Widget buildBody() {
+    switch (selectedIndex) {
       case 0:
         return const HistoryPage();
       case 2:
@@ -30,10 +30,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return AppShell(
-      currentIndex: _selectedIndex,
+      currentIndex: selectedIndex,
       onNavTap: onNavTap,
       onHomeTap: () => onNavTap(1),
-      body: _buildBody(),
+      body: buildBody(),
     );
   }
 }
