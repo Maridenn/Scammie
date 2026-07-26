@@ -1,51 +1,50 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/game_result.dart';
-import '../../models/user_profile.dart';
 
 class ResultRepository {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  //save result under uid
+  CollectionReference<Map<String, dynamic>> results(String uid) =>
+      db.collection('users').doc(uid).collection('results');
+
   Future<void> saveResult(String uid, GameResult result) async {
-    final userDoc = _db.collection('users').doc(uid);
-
-    await userDoc.collection('results').add(result.toMap());
-
-    final snapshot = await userDoc.get();
-    final data = snapshot.data();
-    if (data == null)
-      return; // result was saved, profile stats just aren't updated
-    final profile = UserProfile.fromMap(data);
-
-    await userDoc.update({
-      'gamesPlayed': profile.gamesPlayed + 1,
-      if (result.scorePercent > profile.bestScore) ...{
-        'bestScore': result.scorePercent,
-        'bestGame': result.scenarioTitle,
-      },
-    });
+    await results(uid).add(result.toMap());
+    await updateAggregates(uid, result);
   }
 
-  //provide previous game result
   Future<List<GameResult>> getHistory(String uid) async {
-    final query = await _db
-        .collection('users')
-        .doc(uid)
-        .collection('results')
-        .orderBy('playedAt', descending: true)
-        .get();
-    return query.docs
+    final snap = await results(uid).orderBy('playedAt', descending: true).get();
+    return snap.docs
         .map((d) => GameResult.fromMap(d.data(), id: d.id))
         .toList();
   }
 
-  //delete a single game result, best score is not recalculated
   Future<void> deleteResult(String uid, String resultId) async {
-    await _db
-        .collection('users')
-        .doc(uid)
-        .collection('results')
-        .doc(resultId)
-        .delete();
+    await results(uid).doc(resultId).delete();
+  }
+
+  Future<void> updateAggregates(String uid, GameResult result) async {
+    final userRef = db.collection('users').doc(uid);
+    await db.runTransaction((tx) async {
+      final snap = await tx.get(userRef);
+      final data = snap.data() ?? <String, dynamic>{};
+
+      final scenarios = Map<String, dynamic>.from(
+        (data['scenariosPlayed'] as Map?) ?? const <String, dynamic>{},
+      );
+      scenarios[result.scenarioId] = true;
+
+      final best = (data['bestScore'] as num?)?.toInt() ?? 0;
+
+      final update = <String, dynamic>{
+        'scenariosPlayed': scenarios,
+        'gamesPlayed': scenarios.length,
+      };
+      if (result.scorePercent > best) {
+        update['bestScore'] = result.scorePercent;
+        update['bestGame'] = result.scenarioTitle;
+      }
+      tx.set(userRef, update, SetOptions(merge: true));
+    });
   }
 }
