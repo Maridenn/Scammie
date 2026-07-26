@@ -8,12 +8,14 @@ class AppShell extends StatelessWidget {
     this.currentIndex = 1,
     this.onNavTap,
     this.onHomeTap,
+    this.title = "Scammie Simulator",
   });
 
   final Widget body;
   final int currentIndex;
   final ValueChanged<int>? onNavTap;
   final VoidCallback? onHomeTap;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class AppShell extends StatelessWidget {
         bottom: false,
         child: Column(
           children: [
-            Header(onLogoTap: onHomeTap),
+            Header(onLogoTap: onHomeTap, title: title),
             Expanded(child: body),
           ],
         ),
@@ -54,9 +56,10 @@ class AppShell extends StatelessWidget {
 }
 
 class Header extends StatelessWidget {
-  const Header({super.key, this.onLogoTap});
+  const Header({super.key, this.onLogoTap, this.title = "Scammie Simulator"});
 
   final VoidCallback? onLogoTap;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +81,7 @@ class Header extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                Text("Scammie Simulator", style: AppTheme.brandName),
+                Text(title, style: AppTheme.brandName),
               ],
             ),
           ),
