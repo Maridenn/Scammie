@@ -21,7 +21,7 @@ class UserProfile {
       'username': username,
       'email': email,
       'bestScore': bestScore,
-      'bestGame' : bestGame,
+      'bestGame': bestGame,
       'gamesPlayed': gamesPlayed,
     };
   }
@@ -32,7 +32,7 @@ class UserProfile {
       username: map['username'] ?? '',
       email: map['email'] ?? '',
       bestScore: map['bestScore'] ?? 0,
-      bestGame: map['bestGame']?? 'none',
+      bestGame: map['bestGame'] ?? 'none',
       gamesPlayed: map['gamesPlayed'] ?? 0,
     );
   }
